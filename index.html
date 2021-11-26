@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRUD</title>
+    <style>
+      body {
+        margin: auto;
+        margin-top: 100px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        /* padding-bottom: 3rem; */
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+
+      #container {
+        width: 50%;
+        height: 100%;
+        background-color: #eee;
+        border-radius: 10px;
+        padding: 10px;
+      }
+      #head {
+        display: flex;
+        padding-right: 10%;
+        padding-left: 10%;
+        color: #fff;
+        background-color: #333;
+        justify-content: space-between;
+      }
+      #content {
+        display: flex;
+        justify-content: space-between;
+        padding-right: 10%;
+        padding-left: 10%;
+        border-bottom: 1px solid red;
+      }
+      #content > p {
+        font-weight: bold;
+      }
+      #btn {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 10%;
+        margin-top: 20px;
+      }
+      #btn > button {
+        color: white;
+        font-weight: bold;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+      }
+      #btn > button:hover {
+        opacity: 0.5;
+        cursor: pointer;
+      }
+      #inp {
+        margin-top: 20px;
+      }
+      #inp > input {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #ddd;
+        border: none;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Container -->
+    <div id="container">
+      <div id="head">
+        <h4>Nama</h4>
+        <h4>Umur</h4>
+      </div>
+      <div id="content">
+        <p>Fa</p>
+        <p>10</p>
+      </div>
+      <div id="content">
+        <p>Fa</p>
+        <p>10</p>
+      </div>
+      <div id="inp">
+        <label for="name">Nama</label>
+        <input name="name" type="text" />
+        <label for="age">Umur</label>
+        <input name="age" type="text" />
+      </div>
+      <div id="btn">
+        <button id="add" style="background-color: #038800">Tambah</button>
+        <button id="update" style="background-color: yellowgreen">
+          Update
+        </button>
+        <button id="delete" style="background-color: red">Hapus</button>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
