@@ -1,9 +1,10 @@
 const express = require("express");
 const app = express();
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
-const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const { user, absensi } = require("./models");
 
@@ -17,8 +18,6 @@ app.listen(port, () => {
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
-
-
 
 app.use(express.json());
 
@@ -131,60 +130,104 @@ app.post("/addAbsen", upload.single("imageFile"), async (req, res) => {
   });
 });
 
-
 // Auth
 
-app.post('/register', async(req, res) => {
-
-  const { password, username } = req.body
-
-  const find = await user.findOne({
-    where: {
-      username
-    }
-  })
-
-  if(find) return res.status(201).send({
-    status: 'failed',
-    message: `User with username '${username}' already`
-  })
-
-  const hashedPassword = await bcrypt.hash(password, 10)
-
-  const create = await user.create({
-    ...req.body,
-    password: hashedPassword
-  })
-
-  return res.send({
-    statuses: 'success register',
-    user: create
-  })
-})
-
-app.post("/login", async (req, res) => {
-
-  const {username, password} = req.body
+app.post("/register", async (req, res) => {
+  const { password, username } = req.body;
 
   const find = await user.findOne({
     where: {
       username,
-    }
-  })
+    },
+  });
 
-  if(!find) return res.status(201).send({
-    statuses: 'failed',
-    message: 'User not found'
-  })
+  if (find)
+    return res.status(201).send({
+      status: "failed",
+      message: `User with username '${username}' already`,
+    });
 
-  const check = await bcrypt.compare(password, find.password)
-  if(!check) return res.status(201).send({
-    status: 'failed',
-    message: 'Wrong Password'
-  })
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const create = await user.create({
+    ...req.body,
+    password: hashedPassword,
+  });
 
   return res.send({
-    statuses: 'success login',
-    user: find
-  })
-})
+    statuses: "success register",
+    user: create,
+  });
+});
+
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  const find = await user.findOne({
+    where: {
+      username,
+    },
+  });
+
+  if (!find)
+    return res.status(201).send({
+      statuses: "failed",
+      message: "User not found",
+    });
+
+  const check = await bcrypt.compare(password, find.password);
+
+  if (!check)
+    return res.status(201).send({
+      status: "failed",
+      message: "Wrong Password",
+    });
+
+  const secret_key = "soni";
+  const token = await jwt.sign({ id: find.id, username }, secret_key);
+
+  return res.send({
+    statuses: "success login",
+    user: find,
+    token,
+  });
+});
+
+app.post("/check-auth", async (req, res) => {
+  try {
+    const token = req.body.token;
+    const secret = "soni";
+
+    const data = await jwt.verify(token, secret);
+
+    if (!data)
+      return res.status(401).send({
+        status: "failed",
+        message: "Forbidden",
+      });
+
+    const { username } = data;
+    let find = await user.findOne({
+      where: {
+        username,
+      },
+    });
+
+    if (!find)
+      return res.status(201).send({
+        status: "failed",
+        message: "User not found",
+      });
+
+    find.password = undefined;
+    return res.send({
+      user: find,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({
+      status: "failed",
+      error,
+    });
+  }
+});
